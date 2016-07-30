@@ -1,0 +1,30 @@
+version: '2'
+services:
+  messaging:
+      image: rabbitmq:3.6.1-management
+      hostname: message-rabbit
+      ports:
+          - "15672:15672"
+          - "5672:5672"
+      env_file:
+          - ./dev.env
+  db:
+      image: organization/imagename
+      ports:
+          - "5432:5432"
+      env_file:
+          - ./dev.env
+  microservice:
+      build:
+        context: ./
+      ports:
+          - "5008:5008"
+          - "8082:8082"
+      links:
+          - db
+          - messaging
+      volumes:
+          - ./src/build
+      command: mvn spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5008"
+      env_file:
+          - ./dev.env

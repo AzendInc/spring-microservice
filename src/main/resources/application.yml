@@ -1,0 +1,43 @@
+server:
+   port: ${ZUUL_EDGE_SERVER_PORT}
+
+zuul:
+  ignoredServices: '/oauth/**'
+  routes:
+    microserviceApi:
+      path: /v1/api/service/**
+      url: http://api:${API_SERVER_PORT}/service
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: ${DEBUG}
+    properties:
+      hibernate:
+        default_schema: auth
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://db:${POSTGRES_PORT}/${POSTGRES_DATABASE}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+debug: ${DEBUG}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+microservice:
+  auth:
+    max-invalid-login-attempts: 5
+    account-lockout-duration-minutes: 30
+    user-mgmt-token-expir-minutes: 1440
+    minimum-user-age: 18
+  smtp:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+  support-email: ${SMTP_SUPPORT_EMAIL}
